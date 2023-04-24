@@ -1,0 +1,20 @@
+{
+	"firstName":"danylo",
+	"lastName":"zhukov",
+	"password": "asdfqwer1234",
+	"country": "Ukraine",
+	"resumePath": "D:/others/upwork/danylo(Quao).pdf",
+	"professionalRole": "Machine learning | data processing | computer vision", 
+	"languageIndex": -2, 
+	"skills": ["deep learning", "python", "image processing", "machine learning", "ocr", "data processing", "web scraping", "bot development", "predictive analytics", "flask", "django", "react", "restful"],
+	"overview": "I am senior software engineer.\n1. Expert in ML/Deep learning, optimization algorithm, OCR, Data analysis & prediction, Computer vision.\n  I implement good algorithms in serveral fields and get perfect results in difficult projects, and I also study new algorithm.\n2. Rich experiences in Web scraping & bot development in serveral feild.\n3. Good experiences in python-based backend and react front-end.",
+	"categories": ["Web Development", "AI & Machine Learning", "Data Extraction/ETL"],
+	"houlyWage": "40",
+	"street": "Aacedemic St",
+	"city": "kyiv",
+	"phone": "446616055",
+	"zipCode": "91030",
+	"photoPath": "D:/others/upwork/myphoto.jpg",
+	"bidTime": "2",
+	"initBID": "Good day.\nI have checked your project carefully and I can do it well.\nI am an expert in this field.\n I want to discuss more in chat.\nThanks and Regards"
+}
