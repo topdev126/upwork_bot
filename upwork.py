@@ -27,6 +27,7 @@ class UpworkBot():
 
     def driverFun(self,):
         chrome_options = ChromeOptions()
+        chrome_options.add_argument("--start-maximized")
         # chrome_options.add_argument('-headless-')
         # dPath = os.path.join(os.path.dirname(__file__), "./chromedriver")
         # chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
@@ -120,6 +121,11 @@ class UpworkBot():
         time.sleep(0.5)
         # country setting
         W(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@id='country-dropdown']"))).click()
+        countryInput = W(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@type='search']")))
+        countryInput.click()
+        self.type_keys(countryInput, country)
+        time.sleep(0.5)
+        countryInput.send_keys(Keys.ARROW_DOWN)
         W(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH,f"//ul[@role='listbox']/li/span/span[contains(text(), '{country}')]"))).click()
         checkUpPolicy.click()
         time.sleep(0.5)
@@ -349,6 +355,9 @@ class UpworkBot():
             try:
                 # if stopFlag: break
                 self.driver.refresh()
+                try:
+                    W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-ev-unique_element_id='t-cfeui_qp_Close_8']"))).click()
+                except: pass
                 # scrol down
                 W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//section[@class='up-card-section up-card-list-section up-card-hover']")))
                 self.driver.execute_script("window.scrollTo(0, 1000)")
@@ -443,13 +452,19 @@ class UpworkBot():
                         time.sleep(0.5)
 
                     # cover letter
-                    description = descriptions[i] + "\nGive me Sample my bid content to get this job."
-                    bidContent = self.getBID(description)            
-                    time.sleep(5)
                     coverLetter = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//textarea[@aria-labelledby='cover_letter_label']")))
-                    if len(bidContent) < 50:
-                        bidContent = self.Infos['initBID']
-                    self.type_keys(coverLetter, bidContent)
+                    if "bubble" in descriptions[i].lower():
+                        bidContent = self.Infos['customBID']['bubble']
+                        self.type_keys(coverLetter, bidContent)
+                    else:
+                        description = descriptions[i] + "\nGive me Sample my bid content to get this job."
+                        bidContent = self.getBID(description)            
+                        time.sleep(5)
+                        if len(bidContent) < 50:
+                            bidContent = self.Infos['initBID']
+                        else:
+                            bidContent = self.Infos['CVHeader'] + "\n\n" + bidContent + "\n\n" + self.Infos['CVFooter']
+                        self.type_keys(coverLetter, bidContent)
                     time.sleep(0.5)
                     # some questions:
                     try:
@@ -460,12 +475,21 @@ class UpworkBot():
                                 questionLabel = question.find_element(By.XPATH, ".//label[@class='up-label']").text
                                 questionInput = question.find_element(By.XPATH, ".//textarea[@class='up-textarea']")
                                 ques = questionLabel + "\nGive me clear answer for this question."
-                                answer = self.getBID(ques)  
-                                if len(answer) < 5: answer = "    "
-                                time.sleep(1)
-                                self.type_keys(questionInput, answer)
+                                if "github" in questionLabel.lower():
+                                    self.type_keys(questionInput, "https://github.com/" + self.Infos['githubUsername'])
+                                else:
+                                    answer = self.getBID(ques)  
+                                    if len(answer) < 5: answer = "    "
+                                    time.sleep(1)
+                                    self.type_keys(questionInput, answer)
                     except: pass      
-                    time.sleep(0.5)              
+                    time.sleep(0.5)     
+                    # boost
+                    try:
+                        W(self.driver, 0.5).until(EC.presence_of_element_located((By.XPATH, "//button[@class='up-btn up-btn-default m-0']"))).click()
+                        time.sleep(0.5)
+                        W(self.driver, 0.5).until(EC.presence_of_element_located((By.XPATH, "//button[@class='up-btn up-btn-default up-btn-sm m-0']"))).click()
+                    except: pass
                     # send
                     bidSend = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@class='up-btn up-btn-primary m-0']")))
                     bidSend.click()
