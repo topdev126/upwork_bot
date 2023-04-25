@@ -1,4 +1,0 @@
-xxxx
-Looking for a lead full stack developer to manage the development of the micro loans web application
-Software Architect for Consultation
-Help us implement logs & automated testing on our React Native app
