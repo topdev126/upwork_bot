@@ -14,6 +14,14 @@ import os, json
 import re
 # from pynput.keyboard import Key, Controller as KeyboardController
 # keyboard = KeyboardController()
+
+FIXED_BUDGET_DURATION_LESS_1 = 3000
+FIXED_BUDGET_DURATION_1_3 = 6000
+FIXED_BUDGET_DURATION_3_6 = 10000
+FIXED_BUDGET_PERCENTAGE_LESS_1 = 0.9
+FIXED_BUDGET_PERCENTAGE_1_3 = 0.8
+FIXED_BUDGET_PERCENTAGE_3_6 = 0.8
+FIXED_BUDGET_PERCENTAGE_MORE_6 = 0.7
 class UpworkBot():
     def __init__(self, jsonInfos):
         self.driver = None
@@ -76,6 +84,38 @@ class UpworkBot():
             continueToLogin = W(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, "//button[@id='login_control_continue']")))
             continueToLogin.click()
             time.sleep(3)
+
+            # protect your account
+            
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), \"Let's make sure it's you\" ) ]"))):
+                    loginAnswer = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@id='login_answer']")))
+                    self.type_keys(loginAnswer, self.Infos['secretKey'])
+                    next = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@id='login_control_continue']")))
+                    next.click() 
+            except: pass
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Protect your account' ) ]"))):
+                    protectNextButton = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@id='control_continue']")))
+                    protectNextButton.click()
+            except: pass
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Scan this QR Code or request a key' ) ]"))):
+                    protectSkipButton = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@id='control_cancel']")))
+                    protectSkipButton.click()
+            except: pass
+            # Receive a prompt on your Upwork mobile app
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Receive a prompt on your Upwork mobile app' ) ]"))):
+                    protectSkipButton = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@id='control_cancel']")))
+                    protectSkipButton.click()
+            except: pass
+            # Security preference confirmed
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Security preference confirmed' ) ]"))):
+                    protectDoneButton = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@id='control_continue']")))
+                    protectDoneButton.click()
+            except: pass
             # check if logining
             try:
                 W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//section[@class='up-card-section up-card-list-section up-card-hover']")))
@@ -135,7 +175,7 @@ class UpworkBot():
             W(self.driver, 60).until(EC.presence_of_element_located((By.XPATH, "//a[@id='collapseChangeEmailButton']")))
             return True
         except: return False
-                
+
     def emailVerifyAndMain(self, url):
         try:
             self.driver.get(url)
@@ -212,10 +252,18 @@ class UpworkBot():
             next = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
             next.click()      
             time.sleep(1.5)
+            # certification
+            try:
+                if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Do you have certifications?' ) ]"))):
+                    checkbox = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@data-test='checkbox-input']")))
+                    checkbox.click()
+                    next = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+                    next.click() 
+            except: pass
             # languages
             langInput = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@class='air3-dropdown-toggle-label ellipsis']")))
             langInput.click()
-            time.sleep(0.3)
+            time.sleep(2)
             languageIndex = self.Infos['languageIndex']
             selLang = self.driver.find_elements(By.XPATH, "//li[@class='air3-menu-item']")[languageIndex] # clients
             selLang.click()
@@ -224,7 +272,7 @@ class UpworkBot():
             time.sleep(2.5)
             # skills
             skills = self.Infos['skills']
-            skills.insert(0, 'xxx')
+            skills.insert(0, '')
             for skill in skills:
                 try:
                     typeInput = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@aria-labelledby='skills-input']")))    
@@ -252,7 +300,7 @@ class UpworkBot():
             overviewInput = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//textarea[@aria-labelledby='overview-label']")))
             overviewInput.send_keys(Keys.DELETE)
             self.type_keys(overviewInput, overview)
-            time.sleep(0.3)
+            time.sleep(1)
             next = W(self.driver, 6).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
             next.click()   
             time.sleep(1.5)
@@ -334,9 +382,11 @@ class UpworkBot():
             self.driver.get(findWorkUrl)
             time.sleep(3)
             return 200
-        except: return 199
+        except Exception as e: 
+            print(e)
+            return 199
     def autoBID(self):
-        findWorkUrl = "https://www.upwork.com/nx/find-work/most-recent"
+        findWorkUrl = "https://www.upwork.com/nx/jobs/search/?sort=recency&subcategory2_uid=531770282589057033,531770282589057037,531770282589057034,531770282589057024,531770282589057031,531770282584862733&t=0,1&amount=500-&payment_verified=1&hourly_rate=30-"
         self.driver.get(findWorkUrl)
         time.sleep(4)
         # try:
@@ -355,6 +405,17 @@ class UpworkBot():
             try:
                 # if stopFlag: break
                 self.driver.refresh()
+                time.sleep(1)
+                try:
+                    if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Buy Connects' ) ]"))):
+                        return 131
+                except: pass
+                try:
+                    if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Submit a Proposal' ) ]"))):
+                        self.driver.close()
+                        self.driver.switch_to.window(self.driver.window_handles[0])
+                        time.sleep(1)
+                except: pass
                 try:
                     W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-ev-unique_element_id='t-cfeui_qp_Close_8']"))).click()
                 except: pass
@@ -362,10 +423,10 @@ class UpworkBot():
                 W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//section[@class='up-card-section up-card-list-section up-card-hover']")))
                 self.driver.execute_script("window.scrollTo(0, 1000)")
                 # get avaiable connect balances
-                connectBalance = W(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, "//a[@data-ev-unique_element_id='t-fwh_connects_AvailableConnectsBalance']"))).text
-                connectBalance = int(re.findall(r'\d+', connectBalance)[0])
-                if connectBalance < 6:
-                    return 131 # insufficient connect.
+                # connectBalance = W(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, "//a[@data-ev-unique_element_id='t-fwh_connects_AvailableConnectsBalance']"))).text
+                # connectBalance = int(re.findall(r'\d+', connectBalance)[0])
+                # if connectBalance < 8:
+                #     return 131 # insufficient connect.
                 
                 # get jobs 
                 titles, jobTypes, verifiedLists, links, descriptions = [], [], [], [], []
@@ -399,10 +460,12 @@ class UpworkBot():
                     time.sleep(0.5)
                     # get connect count
                     
-                    connectBalance = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//div[@class='up-card-section actions-section']/div[2]/div[2]"))).text
-                    connectBalance = int(re.findall(r'\d+', connectBalance)[0])
-                    if connectBalance < 6:
-                        return 131 # insufficient connect.                    
+                    try:
+                        connectBalance = W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Available Connects' ) ]"))).text
+                        connectBalance = int(re.findall(r'\d+', connectBalance)[0])
+                        if connectBalance < 8:
+                            return 131 # insufficient connect. 
+                    except: pass                   
                     
                     errorCheck = False
                     try:
@@ -422,18 +485,48 @@ class UpworkBot():
                         closeButton.click()
                     except: pass
                     time.sleep(1.5)
+                    try:
+                        if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Buy Connects' ) ]"))):
+                            return 131
+                    except: pass
                     if jobTypes[i] == "Fixed-price":
-                        # by project
-                        W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//label[@class='up-checkbox-label']")))
-                        radioButton = self.driver.find_elements(By.XPATH, "//label[@class='up-checkbox-label']")[1]
-                        radioButton.click()
+                        try:
+                            # by project
+                            W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//label[@class='up-checkbox-label']")))
+                            radioButton = self.driver.find_elements(By.XPATH, "//label[@class='up-checkbox-label']")[1]
+                            radioButton.click()
+                        except: pass
                         # duration
                         time.sleep(0.5)
-                        duration = self.driver.find_elements(By.XPATH, "//span[@class='flex-1 ellipsis']")[0] # duration dropdown click
+                        budgetEditbox = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//input[@id='charged-amount-id']")))
+                        budget = budgetEditbox.get_attribute('value')
+                        budget = float(budget)
+                        durationIndex = 0
+                        if budget < FIXED_BUDGET_DURATION_LESS_1: 
+                            durationIndex = -1
+                            budget *= FIXED_BUDGET_PERCENTAGE_LESS_1
+                        elif budget < FIXED_BUDGET_DURATION_1_3: 
+                            budget *= FIXED_BUDGET_PERCENTAGE_1_3
+                            durationIndex = -2
+                        elif budget < FIXED_BUDGET_DURATION_3_6: 
+                            budget *= FIXED_BUDGET_PERCENTAGE_3_6
+                            durationIndex = -3
+                        else: 
+                            durationIndex = -4
+                            budget *= FIXED_BUDGET_PERCENTAGE_MORE_6
+                        budgetEditbox.clear()
+                        self.type_keys(budgetEditbox, budget)
+                        duration = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//div[@class='up-dropdown-toggle-title']"))) # duration dropdown click
                         duration.click()
-                        time.sleep(0.5)
+                        time.sleep(2)
                         durationOptions = self.driver.find_elements(By.XPATH, "//li[@role='option']")
-                        durationOptions[-1].click() #self.driver.execute_script('arguments[0].click()', acceptCookiesBtn)
+                        
+                        if len(durationOptions) == 0:
+                            duration.click()
+                            time.sleep(2)
+                            durationOptions = self.driver.find_elements(By.XPATH, "//li[@role='option']")
+                        time.sleep(1)
+                        durationOptions[durationIndex].click() #self.driver.execute_script('arguments[0].click()', acceptCookiesBtn)
                         time.sleep(0.5)
                     else:
                         try:
@@ -498,7 +591,12 @@ class UpworkBot():
                         checkSending = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//input[@name='checkbox']")))
                         checkSending.click()
                         submit = W(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@class='up-btn up-btn-primary m-0 btn-primary']")))
-                        submit.click()                    
+                        submit.click()  
+                        time.sleep(3)
+                        try:
+                            if W(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Buy Connects' ) ]"))):
+                                return 131
+                        except: pass                  
                     except: pass
 
                     checkedJobs.append(titles[i].strip())
@@ -514,7 +612,9 @@ class UpworkBot():
                             f.write(f"{line}\n")   
 
                 time.sleep(int(self.Infos['bidTime'])*60)
-            except: return 130
+            except Exception as e: 
+                print(e)
+                pass
 
     def getBID(self, description):
         import openai
@@ -537,6 +637,7 @@ def main():
     upworkBot = UpworkBot()
     su = upworkBot.signUp()
     upworkBot.emailVerify(url)
+    verifyLink = upworkBot.getVerifyLink(email)
     upworkBot.mainBot()
 
     # https://www.upwork.com/signup/verify-email/token/VuDR9cejmf?frkscc=w5mah3jPMGGl
