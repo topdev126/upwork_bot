@@ -164,7 +164,9 @@ class Main(QMainWindow):
                     # Delay
                     self.printMessage('Idling ...')
                     time.sleep(signupIntervalTime * 60)
+                else: self.printMessage('Error while in signing up')
                 n += 1
+            self.printMessage('Completed!')
         else:
             if self.driver is None:
                 self.driver = getChromeDriver()
@@ -172,10 +174,11 @@ class Main(QMainWindow):
             success = self.signup()
             if success:
                 self.canAutoBid = True
+                self.printMessage('Completed!')
             else: 
                 self.canAutoBid = False
+                self.printMessage('Error while signing up')
             self.setStatus(STATUS_IDLE)
-        self.printMessage('Completed!')
     
     def handleLogin(self):
         email = self.emailEdit.text()
@@ -190,24 +193,30 @@ class Main(QMainWindow):
             self.canAutoBid = False
             self.setStatus(STATUS_LOGIN)
             success = self.login()
-            self.setStatus(STATUS_IDLE)
-            self.setStatus(STATUS_BID)
-            if success: self.autoBid()
+            if success:
+                self.setStatus(STATUS_BID)
+                if success: 
+                    self.autoBid()
+                    self.printMessage('Completed!')
+            else: self.printMessage('Error while logging in')
             self.setStatus(STATUS_IDLE)
         else:
             self.setStatus(STATUS_LOGIN)
             success = self.login()
             if success: 
                 self.canAutoBid = True
+                self.printMessage('Completed!')
             else:
                 self.canAutoBid = False
+                self.printMessage('Error while logging in')
             self.setStatus(STATUS_IDLE)
-        self.printMessage('Completed!')
 
     def handleAutobid(self):
         if self.canAutoBid and self.driver is not None: 
             self.setStatus(STATUS_BID)
-            self.autoBid()
+            success = self.autoBid()
+            if success: self.printMessage('Completed!')
+            else: self.printMessage('Error while auto bidding')
             self.setStatus(STATUS_IDLE)
         else: self.printMessage('Please log in')
 
