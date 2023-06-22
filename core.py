@@ -228,9 +228,10 @@ class Core():
                     skip.click()
             except: pass
             # languages
+            time.sleep(2)
             langInput = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@class='air3-dropdown-toggle-label ellipsis']")))
             langInput.click()
-            time.sleep(2)
+            time.sleep(1)
             selLang = driver.find_elements(By.XPATH, "//li[@class='air3-menu-item']")[-2] # clients
             selLang.click()
             time.sleep(1)
