@@ -70,7 +70,7 @@ def getUpworkVerifyLink(email, user, password):
         time.sleep(2)
         count = 0
         verifyLink = False
-        while(count < 10):
+        while(count < 20):
             count += 1
             msgs = get_emails(search('TO', email, con))
 
@@ -86,7 +86,9 @@ def getUpworkVerifyLink(email, user, password):
 
                         # Handling errors related to unicodenecode
                         try:
-                            spos = data.find('href=3D"https://www.upwork.com/nx/signup/verify-emai=\r\nl/token/')
+                            data = data.replace('=\r\n', '')
+                            data = data.replace('=3D', '=')
+                            spos = data.find('href="https://www.upwork.com/nx/signup/verify-email/token/')
                             spos += 50
                             data2 = data[spos : spos + 60]
                             token = data2.split('">')[0]

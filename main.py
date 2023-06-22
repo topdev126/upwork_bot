@@ -40,6 +40,7 @@ class Main(QMainWindow):
         self.autoBidAfterSignup = self.autoSignupCheckBox.isChecked()
         self.autoBidAfterLogin = self.autoLoginCheckBox.isChecked()
         self.sendMsgToTelegram = self.sendMsgToTelegramCheckBox.isChecked()
+        self.genFakeEmail = self.generateAutoEmailCheckBox.isChecked()
 
         try:
             self.info = self.getConfigInfo()
@@ -74,6 +75,20 @@ class Main(QMainWindow):
     def writeEmailLog(self, email):
         with open(EMAIL_CHECK_FILE, 'a') as f:
             f.write(f"{email}\n")  
+
+    def getEmailFromList(self):
+        email = ''
+        try:
+            with open(EMAIL_LIST_FILE, 'r') as f:
+                emailList = f.readlines()
+                if len(emailList) > 0: 
+                    email = emailList[0].replace('\n', '')
+                    emailList.pop(0)
+                with open(EMAIL_LIST_FILE, 'w') as f:
+                    for emailLine in emailList:
+                        f.write(f"{emailLine}")
+        except: return email
+        return email
 
     def setStatus(self, status):
         self.status = status
@@ -249,7 +264,14 @@ class Main(QMainWindow):
 
     def signup(self):
         try:
-            emailAddress = generateFakeEmail(self.info['gmailUser'], self.info['emailSuffixCount'])
+            self.genFakeEmail = self.generateAutoEmailCheckBox.isChecked()
+            emailAddress = ""
+            if self.genFakeEmail:
+                emailAddress = generateFakeEmail(self.info['gmailUser'], self.info['emailSuffixCount'])
+            else:
+                emailAddress = self.getEmailFromList()
+            if emailAddress == '':
+                return False
             self.emailEdit.setText(emailAddress)
             self.printMessage("Please wait while signing up ... ")
 

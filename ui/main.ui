@@ -139,9 +139,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>160</y>
+      <y>139</y>
       <width>800</width>
-      <height>190</height>
+      <height>230</height>
      </rect>
     </property>
     <property name="font">
@@ -157,7 +157,7 @@
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>42</y>
+       <y>37</y>
        <width>171</width>
        <height>30</height>
       </rect>
@@ -173,7 +173,7 @@
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>92</y>
+       <y>87</y>
        <width>171</width>
        <height>30</height>
       </rect>
@@ -189,7 +189,7 @@
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>142</y>
+       <y>137</y>
        <width>211</width>
        <height>30</height>
       </rect>
@@ -202,7 +202,7 @@
      <property name="geometry">
       <rect>
        <x>560</x>
-       <y>50</y>
+       <y>45</y>
        <width>50</width>
        <height>22</height>
       </rect>
@@ -224,7 +224,7 @@
      <property name="geometry">
       <rect>
        <x>559</x>
-       <y>96</y>
+       <y>91</y>
        <width>50</width>
        <height>22</height>
       </rect>
@@ -246,7 +246,7 @@
      <property name="geometry">
       <rect>
        <x>620</x>
-       <y>90</y>
+       <y>85</y>
        <width>60</width>
        <height>30</height>
       </rect>
@@ -259,7 +259,7 @@
      <property name="geometry">
       <rect>
        <x>559</x>
-       <y>146</y>
+       <y>141</y>
        <width>50</width>
        <height>22</height>
       </rect>
@@ -281,7 +281,7 @@
      <property name="geometry">
       <rect>
        <x>620</x>
-       <y>140</y>
+       <y>135</y>
        <width>60</width>
        <height>30</height>
       </rect>
@@ -294,7 +294,7 @@
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>43</y>
+       <y>38</y>
        <width>130</width>
        <height>30</height>
       </rect>
@@ -307,7 +307,7 @@
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>92</y>
+       <y>87</y>
        <width>145</width>
        <height>30</height>
       </rect>
@@ -320,7 +320,7 @@
      <property name="geometry">
       <rect>
        <x>400</x>
-       <y>140</y>
+       <y>135</y>
        <width>121</width>
        <height>30</height>
       </rect>
@@ -333,7 +333,7 @@
      <property name="geometry">
       <rect>
        <x>620</x>
-       <y>43</y>
+       <y>38</y>
        <width>47</width>
        <height>30</height>
       </rect>
@@ -342,12 +342,28 @@
       <string>times</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="generateAutoEmailCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>185</y>
+       <width>221</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate email automatically</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QPushButton" name="signupButton">
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>370</y>
+      <y>380</y>
       <width>100</width>
       <height>40</height>
      </rect>
@@ -366,7 +382,7 @@
     <property name="geometry">
      <rect>
       <x>400</x>
-      <y>370</y>
+      <y>380</y>
       <width>100</width>
       <height>40</height>
      </rect>
@@ -385,7 +401,7 @@
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>370</y>
+      <y>380</y>
       <width>100</width>
       <height>40</height>
      </rect>

@@ -3,6 +3,7 @@ IMAP_URL = 'imap.gmail.com'
 CONFIG_FILE_NAME = 'config.json'
 JOB_CHECK_FILE = 'job_check.txt'
 EMAIL_CHECK_FILE = 'email_check.txt'
+EMAIL_LIST_FILE = 'email_list.txt'
 
 LOGIN_PATH = 'https://www.upwork.com/ab/account-security/login'
 SIGNUP_PATH = 'https://www.upwork.com/nx/signup/?dest=home'

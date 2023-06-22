@@ -159,31 +159,31 @@ class Core():
 
         try:
             # get started 
-            getStarted = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@class='air3-btn mr-7 air3-btn-primary']")))
+            getStarted = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-qa='get-started-btn']")))
             getStarted.click()
             # select level
             W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//div[@data-qa='button-box']")))        
             selectLevel = driver.find_elements(By.XPATH, "//div[@data-qa='button-box']")[2] # expert
             selectLevel.click()
             time.sleep(0.5)
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()
             time.sleep(0.5)
             # select goal
-            W(driver, 6).until(EC.presence_of_element_located((By.XPATH, "//input[@class='air3-btn-box-input']")))
-            goal =  driver.find_elements(By.XPATH, "//input[@class='air3-btn-box-input']")[2] # fulltime job
+            goal = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@value='GET_EXPERIENCE']"))) # full-time jobs
             time.sleep(0.5)
             ActionChains(driver).move_to_element(goal).click().perform()
-            next = W(driver, 15).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 15).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()
             time.sleep(0.5)
             # select method
-            W(driver, 6).until(EC.presence_of_element_located((By.XPATH, "//input[@class='air3-btn-box-input']")))
-            method =  driver.find_elements(By.XPATH, "//input[@class='air3-btn-box-input']")[1] # clients
-            time.sleep(0.5)
-            ActionChains(driver).move_to_element(method).click().perform()
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
-            next.click()   
+            # method = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@value='GET_EXPERIENCE']"))) # clients
+            # time.sleep(0.5)
+            # ActionChains(driver).move_to_element(method).click().perform()
+            # next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
+            # next.click()   
+            skip = W(driver, 15).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='skip-button']")))
+            skip.click()
             time.sleep(0.5)
 
             ### How would you like to tell us about yourself?   
@@ -206,33 +206,35 @@ class Core():
             time.sleep(0.5)
             roleInput.send_keys(Keys.DELETE)
             type_keys(roleInput, professionalRole)
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()     
             time.sleep(1.5)
             # experiences  
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()        
             time.sleep(1.5)
             # education
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()      
             time.sleep(1.5)
             # certification
             try:
                 if W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Do you have certifications?' ) ]"))):
-                    checkbox = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@data-test='checkbox-input']")))
-                    checkbox.click()
-                    next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
-                    next.click() 
+                    # checkbox = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@data-test='checkbox-input']")))
+                    # checkbox.click()
+                    # next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
+                    # next.click() 
+                    skip = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='skip-button']")))
+                    skip.click()
             except: pass
             # languages
             langInput = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//span[@class='air3-dropdown-toggle-label ellipsis']")))
             langInput.click()
             time.sleep(2)
-            languageIndex = info['languageIndex']
-            selLang = driver.find_elements(By.XPATH, "//li[@class='air3-menu-item']")[languageIndex] # clients
+            selLang = driver.find_elements(By.XPATH, "//li[@class='air3-menu-item']")[-2] # clients
             selLang.click()
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            time.sleep(1)
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click() 
             time.sleep(2.5)
             # skills
@@ -251,7 +253,7 @@ class Core():
                 except: pass
                 
             time.sleep(0.5)
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click() 
             time.sleep(1.5)  
             # overview
@@ -266,7 +268,7 @@ class Core():
             overviewInput.send_keys(Keys.DELETE)
             type_keys(overviewInput, overview)
             time.sleep(1)
-            next = W(driver, 6).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 6).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()   
             time.sleep(1.5)
             # categories  
@@ -282,16 +284,16 @@ class Core():
             if not cateCheck:
                 cate = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, f"//button[@class='air3-token mr-2 mb-2 air3-token-multi-select']")))
                 driver.execute_script('arguments[0].click()', cate)
-            next = W(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click()   
             time.sleep(1) 
             # rate
-            rate = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, f"//input[@aria-label='Hourly rate in $/hr']")))
+            rate = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, f"//input[@data-test='currency-input']")))
             rate.clear()
             houlyWage = info['houlyWage']
             type_keys(rate, houlyWage)
             time.sleep(0.5)  
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click() 
             time.sleep(1)
 
@@ -322,7 +324,7 @@ class Core():
             time.sleep(0.5)
 
             # photo
-            photobutton = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@data-cy='open-loader']")))
+            photobutton = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@data-qa='open-loader']")))
             photobutton.click()
             time.sleep(0.5)
             photoPath = info['photoPath']
@@ -330,15 +332,15 @@ class Core():
             photoUpload = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@type='file']")))
             photoUpload.send_keys(photoPath)   
             time.sleep(1)  
-            okayButton = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@class='air3-btn air3-btn-primary']")))   
+            okayButton = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-qa='btn-save']")))
             okayButton.click()
             # check your profile
             time.sleep(5)
-            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='step-next-button']")))
+            next = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-test='next-button']")))
             next.click() 
             time.sleep(1)      
             # submit
-            submitButton = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@class='air3-btn width-md m-0 air3-btn-primary']")))
+            submitButton = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//button[@data-qa='submit-profile-top-btn']")))
             submitButton.click()
 
             time.sleep(3)
@@ -468,6 +470,7 @@ class Core():
                         time.sleep(0.5)
                         budgetEditbox = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//input[@id='charged-amount-id']")))
                         budget = budgetEditbox.get_attribute('value')
+                        budget = budget[1:].replace(',', '')
                         budget = float(budget)
                         durationIndex = 0
                         if budget < FIXED_BUDGET_DURATION_LESS_1: 
@@ -482,7 +485,9 @@ class Core():
                         else: 
                             durationIndex = -4
                             budget *= FIXED_BUDGET_PERCENTAGE_MORE_6
-                        budgetEditbox.clear()
+
+                        budgetEditbox.send_keys(Keys.CONTROL + "a")
+                        budgetEditbox.send_keys(Keys.DELETE)
                         type_keys(budgetEditbox, budget)
                         duration = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//div[@class='up-dropdown-toggle-title']"))) # duration dropdown click
                         duration.click()
@@ -508,7 +513,8 @@ class Core():
                             driver.switch_to.window(driver.window_handles[0])  
                             continue                          
                         rateInput = driver.find_element(By.XPATH, "//input[@id='step-rate']")
-                        rateInput.clear()
+                        rateInput.send_keys(Keys.CONTROL + "a")
+                        rateInput.send_keys(Keys.DELETE)
                         type_keys(rateInput, rate)
                         time.sleep(0.5)
 
@@ -568,16 +574,18 @@ class Core():
                     except: pass
 
                     checkedJobs.append(titles[i].strip())
+                    with open(checkedFile, 'a') as f:
+                        f.write(f"{titles[i].strip()}\n")   
                     
                     time.sleep(1.5)
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
                     time.sleep(5)
                 # write checkedjobs
-                with open(checkedFile, 'w') as f:
-                    for line in checkedJobs[-20:]:
-                        if line.strip() != '':
-                            f.write(f"{line}\n")   
+                # with open(checkedFile, 'a') as f:
+                #     for line in checkedJobs[-20:]:
+                #         if line.strip() != '':
+                #             f.write(f"{line}\n")   
 
                 time.sleep(autoBidIntervalTime * 60)
             except Exception as e: 
