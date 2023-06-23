@@ -2,7 +2,7 @@ from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QMainWindow
 from threading import *
 import json
-
+import random
 from helper import *
 from core import *
 
@@ -42,13 +42,13 @@ class Main(QMainWindow):
         self.sendMsgToTelegram = self.sendMsgToTelegramCheckBox.isChecked()
         self.genFakeEmail = self.generateAutoEmailCheckBox.isChecked()
 
-        try:
-            self.info = self.getConfigInfo()
-        except Exception as e:
-            print(e)
-            self.printMessage('Something went wrong while getting setting information from config file.')
+        # try:
+        #     self.info = self.getConfigInfo()
+        # except Exception as e:
+        #     print(e)
+        #     self.printMessage('Something went wrong while getting setting information from config file.')
         
-        self.printAccountInformation()
+        
             
     def initUI(self):
         self.signupButton.clicked.connect(self.signupProcess)
@@ -62,7 +62,8 @@ class Main(QMainWindow):
         self.autoBidIntervalTimeEdit.setText(str(AUTOBID_INTERVAL_TIME))
 
     def getConfigInfo(self):
-        with open(CONFIG_FILE_NAME, "r") as f:
+        name = CONFIG_DIR + "/" + str(random.randint(CONFIG_START_INDEX, CONFIG_END_INDEX))+".json"
+        with open(name, "r") as f:
             return json.load(f)
 
     def printAccountInformation(self):
@@ -143,6 +144,12 @@ class Main(QMainWindow):
             self.autoBidThread.start()
 
     def handleSignup(self):
+        try:
+            self.info = self.getConfigInfo()
+        except Exception as e:
+            print(e)
+            self.printMessage('Something went wrong while getting setting information from config file.')
+        self.printAccountInformation()
         self.autoBidAfterSignup = self.autoSignupCheckBox.isChecked()
 
         if self.autoBidAfterSignup:

@@ -95,7 +95,7 @@ class Core():
         # cookie acception 
         time.sleep(5)
         try:
-            acceptCookiesBtn = W(driver, 5).until(EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
+            acceptCookiesBtn = W(driver, 205).until(EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
             time.sleep(0.5)
             acceptCookiesBtn.click()
         except: pass
@@ -406,7 +406,7 @@ class Core():
                     if i > 9: break
                     section = sections[i]
                     title = section.find_element(By.XPATH, ".//h3[@class='my-0 p-sm-right job-tile-title']").text
-                    if title.strip() in  checkedJobs: break
+                    if title.strip() in  checkedJobs: continue
                     veri = section.find_element(By.XPATH, ".//strong[@class='text-muted']").text
                     if veri == 'Payment unverified': continue
                     jobType = section.find_element(By.XPATH, ".//strong[@data-test='job-type']").text
@@ -525,14 +525,19 @@ class Core():
                         bidContent = info['customBID']['bubble']
                         type_keys(coverLetter, bidContent)
                     else:
-                        description = descriptions[i] + "\nGive me Sample my bid content to get this job."
-                        bidContent = getResponseFromGPT(description, info['GPTAPIKey'])            
-                        time.sleep(5)
-                        if len(bidContent) < 50:
+                        try:
+                            description = descriptions[i] + "\nGive me Sample my bid content to get this job."
+                            bidContent = getResponseFromGPT(description, info['GPTAPIKey'])            
+                            time.sleep(5)
+                            if len(bidContent) < 50:
+                                bidContent = info['initBID']
+                            else:
+                                bidContent = info['CVHeader'] + "\n\n" + bidContent + "\n\n" + info['CVFooter']
+                            type_keys(coverLetter, bidContent)                            
+                        except:
                             bidContent = info['initBID']
-                        else:
-                            bidContent = info['CVHeader'] + "\n\n" + bidContent + "\n\n" + info['CVFooter']
-                        type_keys(coverLetter, bidContent)
+                            type_keys(coverLetter, bidContent)  
+
                     time.sleep(0.5)
                     # some questions:
                     try:
@@ -571,12 +576,11 @@ class Core():
                         try:
                             if W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//*[ contains (text(), 'Buy Connects' ) ]"))):
                                 return INSUFFICIENT_CONNECTS
-                        except: pass                  
-                    except: pass
-
-                    checkedJobs.append(titles[i].strip())
-                    with open(checkedFile, 'a') as f:
-                        f.write(f"{titles[i].strip()}\n")   
+                        except: 
+                            checkedJobs.append(titles[i].strip())
+                            with open(checkedFile, 'a') as f:
+                                f.write(f"{titles[i].strip()}\n")                               
+                    except: pass 
                     
                     time.sleep(1.5)
                     driver.close()

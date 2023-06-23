@@ -1,6 +1,8 @@
 
 IMAP_URL = 'imap.gmail.com'
-CONFIG_FILE_NAME = 'config.json'
+CONFIG_START_INDEX = 1
+CONFIG_END_INDEX = 10 
+CONFIG_DIR = "upwork"
 JOB_CHECK_FILE = 'job_check.txt'
 EMAIL_CHECK_FILE = 'email_check.txt'
 EMAIL_LIST_FILE = 'email_list.txt'
