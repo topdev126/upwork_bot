@@ -28,6 +28,7 @@ class Main(QMainWindow):
 
         self.info = None
         self.driver = None
+        self.gptDriver = getGptDriver()
 
         self.signupThread = None
         self.loginThread = None
@@ -254,7 +255,7 @@ class Main(QMainWindow):
             pass
         try:
             self.setStatus(STATUS_BID)
-            result = Core.autoBid(autoBidIntervalTime, self.info, self.driver)
+            result = Core.autoBid(autoBidIntervalTime, self.info, self.driver, self.gptDriver)
             self.setStatus(STATUS_IDLE)
             if result == INSUFFICIENT_CONNECTS:
                 self.printMessage("Insufficient connect balances.")
@@ -271,6 +272,11 @@ class Main(QMainWindow):
 
     def signup(self):
         try:
+            try:
+                self.info = self.getConfigInfo()
+            except Exception as e:
+                print(e)
+                self.printMessage('Something went wrong while getting setting information from config file.')            
             self.genFakeEmail = self.generateAutoEmailCheckBox.isChecked()
             emailAddress = ""
             if self.genFakeEmail:

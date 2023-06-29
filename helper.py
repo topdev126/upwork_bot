@@ -5,7 +5,10 @@ import string
 import random
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver import Chrome, ChromeOptions
-from selenium.webdriver import ChromeOptions
+from selenium.webdriver.support.ui import WebDriverWait as W
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import undetected_chromedriver as uc
 
 from constants import *
 
@@ -39,6 +42,21 @@ def getChromeDriver():
     })
     return driver
 
+def getGptDriver():
+    driver = uc.Chrome(headless=True,use_subprocess=False)
+    driver.get("https://chatbot.theb.ai/")
+    driver.implicitly_wait(10)
+
+    return driver 
+
+def deletePrivGptChat(driver):
+    # delete chat
+    W(driver, 2).until(EC.presence_of_element_located((By.XPATH, "//button[@class='p-1']")))
+    driver.find_elements(By.XPATH, "//button[@class='p-1']")[-1].click()
+    confirmButton = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@class='n-button n-button--primary-type n-button--small-type']")))
+    confirmButton.click()   
+    
+    
 def getUpworkVerifyLink(email, user, password):
     try:
         # Function to get email content part i.e its body part
@@ -134,3 +152,42 @@ def getResponseFromGPT(description, apiKey):
     )
 
     return response['choices'][0]['text']  
+def getRespFromBaiChat(driver, description, props):
+    if props != 'ques':
+        # delete previous gpt chat 
+        deletePrivGptChat(driver)
+    queryBar = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//textarea[@class='n-input__textarea-el']")))
+    type_keys(queryBar, description)
+    submitButton = W(driver, 3).until(EC.presence_of_element_located((By.XPATH, "//button[@class='n-button n-button--primary-type n-button--medium-type']")))
+    submitButton.click()
+    time.sleep(6)
+    try:
+        answer = driver.find_elements(By.XPATH, "//div[@class='flex w-full mb-6 overflow-hidden']")[-1].text
+        answer = '\n'.join(answer.split('\n')[1:])
+    except: answer = ""
+
+    answer = filterAnswer(answer, props)
+    
+    return answer
+
+def filterAnswer(answer, props):
+    
+    answerList = answer.split('\n')
+    start_ind_1, start_ind_2, end_ind_1, end_ind_2 = 0, 0, len(answerList)-1, len(answerList)-1
+    for i, ans in enumerate(answerList):
+        if "[Client]" in ans or "Dear" in ans:
+            start_ind_1 = i + 1        
+        if "AI language model" in ans:
+            start_ind_2 = i + 1
+        if "Thank you" in ans:
+            end_ind_1 = i
+        if "[Your Name]" in ans:
+            end_ind_2 = i            
+    start_ind = max(start_ind_1, start_ind_2)
+    end_ind = min(end_ind_1, end_ind_2)
+    if props == 'ques' and end_ind - start_ind > 4: end_ind = start_ind + 4
+    if end_ind >= start_ind: 
+        result = '\n'.join(answerList[start_ind:end_ind])
+    else:
+        result = '\n'.join(answerList[start_ind:start_ind+1])
+    return result

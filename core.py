@@ -245,7 +245,7 @@ class Core():
                 try:
                     typeInput = W(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//input[@aria-labelledby='skills-input']")))    
                     type_keys(typeInput, skill)
-                    time.sleep(0.5)
+                    time.sleep(0.75)
                     typeInput = W(driver, 2).until(EC.presence_of_element_located((By.XPATH, "//input[@aria-labelledby='skills-input']")))    
                     typeInput.send_keys(Keys.ARROW_DOWN)
                     time.sleep(0.3)
@@ -355,7 +355,7 @@ class Core():
             return ERROR_SIGNUP
 
     @staticmethod
-    def autoBid(autoBidIntervalTime, info, driver):
+    def autoBid(autoBidIntervalTime, info, driver, gptDriver):
         findWorkUrl = info['findWorkUrl']
         driver.get(findWorkUrl)
         time.sleep(4)
@@ -429,6 +429,7 @@ class Core():
                     driver.execute_script(f"window.open('{link}')")            
                     driver.switch_to.window(driver.window_handles[1])
                     time.sleep(0.5)
+
                     # get connect count
                     
                     try:
@@ -526,9 +527,12 @@ class Core():
                         type_keys(coverLetter, bidContent)
                     else:
                         try:
-                            description = descriptions[i] + "\nGive me Sample my bid content to get this job."
-                            bidContent = getResponseFromGPT(description, info['GPTAPIKey'])            
-                            time.sleep(5)
+                            # description = descriptions[i] + "\nGive me Sample my bid content to get this job."
+                            description = descriptions[i] + ":" + "\
+                                Give me Sample my bid content to get this job without timeline and cost."
+                            # bidContent = getResponseFromGPT(description, info['GPTAPIKey'])    
+                            bidContent = getRespFromBaiChat(gptDriver, description, 'bid')        
+                            time.sleep(1)
                             if len(bidContent) < 50:
                                 bidContent = info['initBID']
                             else:
@@ -547,12 +551,14 @@ class Core():
                                 question = questions[k]
                                 questionLabel = question.find_element(By.XPATH, ".//label[@class='up-label']").text
                                 questionInput = question.find_element(By.XPATH, ".//textarea[@class='up-textarea']")
-                                ques = questionLabel + "\nGive me clear answer for this question."
+                                ques = questionLabel + "\
+                                    Give me clear answer for this question."
                                 if "github" in questionLabel.lower():
                                     type_keys(questionInput, "https://github.com/" + info['githubUsername'])
                                 else:
-                                    answer = getResponseFromGPT(ques, info['GPTAPIKey'])  
-                                    if len(answer) < 5: answer = "    "
+                                    # answer = getResponseFromGPT(ques, info['GPTAPIKey'])  
+                                    answer = getRespFromBaiChat(gptDriver, ques, 'ques') 
+                                    if len(answer) < 5: answer = ">>>>>"
                                     time.sleep(1)
                                     type_keys(questionInput, answer)
                     except: pass      
