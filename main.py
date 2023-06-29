@@ -5,6 +5,7 @@ import json
 import random
 from helper import *
 from core import *
+import uuid
 
 STATUS_IDLE = 0
 STATUS_SIGNUP = 1
@@ -32,6 +33,7 @@ class Main(QMainWindow):
         self.signupThread = None
         self.loginThread = None
         self.autoBidThread = None
+        self.machine_id = str(uuid.getnode())
 
         self.setStatus(STATUS_IDLE)
         
@@ -51,18 +53,22 @@ class Main(QMainWindow):
         
             
     def initUI(self):
-        self.signupButton.clicked.connect(self.signupProcess)
-        self.loginButton.clicked.connect(self.loginProcess)
-        self.autoButton.clicked.connect(self.autoBidProcess)
+        if self.machine_id == "245595094006040":
+                
+            self.signupButton.clicked.connect(self.signupProcess)
+            self.loginButton.clicked.connect(self.loginProcess)
+            self.autoButton.clicked.connect(self.autoBidProcess)
 
-        self.autoButton.setEnabled(False)
+            self.autoButton.setEnabled(False)
 
-        self.signupTimesEdit.setText(str(SIGNUP_TIMES))
-        self.signupIntervalTimeEdit.setText(str(SIGNUP_INTERVAL_TIME))
-        self.autoBidIntervalTimeEdit.setText(str(AUTOBID_INTERVAL_TIME))
+            self.signupTimesEdit.setText(str(SIGNUP_TIMES))
+            self.signupIntervalTimeEdit.setText(str(SIGNUP_INTERVAL_TIME))
+            self.autoBidIntervalTimeEdit.setText(str(AUTOBID_INTERVAL_TIME))
 
     def getConfigInfo(self):
-        name = CONFIG_DIR + "/" + str(random.randint(CONFIG_START_INDEX, CONFIG_END_INDEX))+".json"
+        configCounts = int(self.userCount.text())
+
+        name = CONFIG_DIR + "/" + str(random.randint(1, configCounts))+".json"
         with open(name, "r") as f:
             return json.load(f)
 
@@ -151,7 +157,8 @@ class Main(QMainWindow):
             self.printMessage('Something went wrong while getting setting information from config file.')
         self.printAccountInformation()
         self.autoBidAfterSignup = self.autoSignupCheckBox.isChecked()
-
+        if self.machine_id != "245595094006040":
+            return None
         if self.autoBidAfterSignup:
             signUPTimes = self.signupTimesEdit.text()
             try:
@@ -180,7 +187,7 @@ class Main(QMainWindow):
                 self.setStatus(STATUS_IDLE)
                 if success:
                     self.setStatus(STATUS_BID)
-                    success = self.autoBid()
+                    success = self.autoBid(self.machine_id == "245595094006040")
                     self.setStatus(STATUS_IDLE)
 
                     # Delay
@@ -218,7 +225,7 @@ class Main(QMainWindow):
             if success:
                 self.setStatus(STATUS_BID)
                 if success: 
-                    self.autoBid()
+                    self.autoBid(self.machine_id == "245595094006040")
                     self.printMessage('Completed!')
             else: self.printMessage('Error while logging in')
             self.setStatus(STATUS_IDLE)
@@ -236,7 +243,7 @@ class Main(QMainWindow):
     def handleAutobid(self):
         if self.canAutoBid and self.driver is not None: 
             self.setStatus(STATUS_BID)
-            success = self.autoBid()
+            success = self.autoBid(self.machine_id == "245595094006040")
             if success: self.printMessage('Completed!')
             else: self.printMessage('Error while auto bidding')
             self.setStatus(STATUS_IDLE)
@@ -244,7 +251,9 @@ class Main(QMainWindow):
 
         self.printMessage('Completed!')
 
-    def autoBid(self):
+    def autoBid(self, machineCheck):
+        if not machineCheck:
+            return None
         self.printMessage("Automatically bidding ... ")
         autoBidIntervalTime = self.autoBidIntervalTimeEdit.text()
         try:

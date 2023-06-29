@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>500</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -356,6 +356,57 @@
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="autoBidIntervalTimeLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>180</y>
+       <width>60</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>180</y>
+       <width>121</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>User Counts</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="userCount">
+     <property name="geometry">
+      <rect>
+       <x>559</x>
+       <y>186</y>
+       <width>50</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>1</string>
+     </property>
+     <property name="maxLength">
+      <number>2</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
    </widget>
